@@ -6,6 +6,8 @@ use Circli\ApiAuth\Exception\InvalidArgument;
 use Circli\ApiAuth\Exception\NotAuthenticated;
 use Circli\ApiAuth\Repository\BasicAuthRepository;
 use Circli\ApiAuth\RequestAttributeKeys;
+use Circli\Extension\Auth\Repositories\Objects\AuthObject;
+use Circli\Extension\Auth\Repositories\Objects\NullAuthObject;
 use Psr\Http\Message\ServerRequestInterface;
 
 final class BasicAuthProvider implements AuthProvider
@@ -14,6 +16,8 @@ final class BasicAuthProvider implements AuthProvider
 
 	/** @var BasicAuthRepository */
 	private $repository;
+	/** @var \Circli\ApiAuth\Repository\Object\AuthToken|null */
+	private $authToken;
 
 	public function __construct(BasicAuthRepository $repository)
 	{
@@ -36,11 +40,21 @@ final class BasicAuthProvider implements AuthProvider
 					'user' => $user,
 				]);
 			}
+			$this->authToken = $token;
 
 			$request = $request->withAttribute(RequestAttributeKeys::AUTHENTICATED, true);
 			return $request->withAttribute(self::TOKEN_KEY, $token);
 		}
 
 		throw new InvalidArgument('Malformed Authorization header. Only supports "Basic"');
+	}
+
+	public function getAuthObject(): AuthObject
+	{
+		if (!$this->authToken) {
+			return new NullAuthObject();
+		}
+
+		return $this->repository->createAuthObject($this->authToken);
 	}
 }

@@ -6,6 +6,8 @@ use Circli\ApiAuth\Exception\InvalidArgument;
 use Circli\ApiAuth\Exception\NotAuthenticated;
 use Circli\ApiAuth\Repository\AuthTokenRepository;
 use Circli\ApiAuth\RequestAttributeKeys;
+use Circli\Extension\Auth\Repositories\Objects\AuthObject;
+use Circli\Extension\Auth\Repositories\Objects\NullAuthObject;
 use Psr\Http\Message\ServerRequestInterface;
 
 final class TokenProvider implements AuthProvider
@@ -14,6 +16,8 @@ final class TokenProvider implements AuthProvider
 
 	/** @var AuthTokenRepository */
 	private $repository;
+	/** @var \Circli\ApiAuth\Repository\Object\AuthToken|null */
+	private $authToken;
 
 	public function __construct(AuthTokenRepository $repository)
 	{
@@ -51,8 +55,18 @@ final class TokenProvider implements AuthProvider
 				'api_id' => $apiId
 			]);
 		}
+		$this->authToken = $authTokenObject;
 
 		$request = $request->withAttribute(RequestAttributeKeys::AUTHENTICATED, true);
 		return $request->withAttribute(self::TOKEN_KEY, $authTokenObject);
+	}
+
+	public function getAuthObject(): AuthObject
+	{
+		if (!$this->authToken) {
+			return new NullAuthObject();
+		}
+
+		return $this->repository->createAuthObject($this->authToken);
 	}
 }

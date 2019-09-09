@@ -4,6 +4,7 @@ namespace Circli\ApiAuth\Provider;
 
 use Circli\ApiAuth\Exception\InvalidArgument;
 use Circli\ApiAuth\Exception\NotAuthenticated;
+use Circli\Extension\Auth\Repositories\Objects\AuthObject;
 use Psr\Http\Message\ServerRequestInterface;
 
 interface AuthProvider
@@ -15,4 +16,6 @@ interface AuthProvider
 	 * @throws NotAuthenticated when authentication fails
 	 */
 	public function authenticate(ServerRequestInterface $request): ServerRequestInterface;
+
+	public function getAuthObject(): AuthObject;
 }
