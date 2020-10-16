@@ -16,7 +16,7 @@ final class AccessKeyProvider implements AuthProvider
     public const TOKEN_KEY = 'circli:api-auth:provider:token';
 
     private AccessKeyRepository $repository;
-    private AuthToken $authToken;
+    private ?AuthToken $authToken = null;
 
     public function __construct(AccessKeyRepository $repository)
     {

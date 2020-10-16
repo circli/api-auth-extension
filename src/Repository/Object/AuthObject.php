@@ -5,8 +5,12 @@ namespace Circli\ApiAuth\Repository\Object;
 final class AuthObject implements \Circli\Extension\Auth\Repositories\Objects\AuthObject
 {
     private AuthToken $token;
+    /** @var mixed */
     private $data;
 
+    /**
+     * @param mixed $data
+     */
     public function __construct(AuthToken $token, $data)
     {
         $this->token = $token;

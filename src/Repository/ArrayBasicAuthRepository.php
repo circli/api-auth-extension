@@ -12,6 +12,9 @@ class ArrayBasicAuthRepository implements BasicAuthRepository
     /** @var array<string, string> */
     private array $users = [];
 
+    /**
+     * @param array<string, string> $users
+     */
     public function __construct(array $users)
     {
         foreach ($users as $user => $password) {
@@ -23,6 +26,9 @@ class ArrayBasicAuthRepository implements BasicAuthRepository
     {
         if ($password[0] !== '$') {
             $password = password_hash($password, PASSWORD_DEFAULT);
+        }
+        if (!$password) {
+            throw new \InvalidArgumentException('Invalid password');
         }
 
         $this->users[$user] = $password;

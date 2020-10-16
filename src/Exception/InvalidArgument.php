@@ -7,12 +7,18 @@ class InvalidArgument extends \InvalidArgumentException
     /** @var array<string, mixed> */
     private array $data;
 
-    public function __construct($message, array $data = [])
+    /**
+     * @param array<string, mixed> $data
+     */
+    public function __construct(string $message, array $data = [])
     {
         parent::__construct($message);
         $this->data = $data;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getData(): array
     {
         return $this->data;
