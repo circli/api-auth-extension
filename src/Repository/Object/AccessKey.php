@@ -4,10 +4,8 @@ namespace Circli\ApiAuth\Repository\Object;
 
 final class AccessKey implements AuthToken
 {
-    /** @var string */
-    private $key;
-    /** @var string */
-    private $hashedToken;
+    private string $key;
+    private string $hashedToken;
 
     public function __construct(string $key, string $hashedToken)
     {

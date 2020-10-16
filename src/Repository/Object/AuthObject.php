@@ -4,8 +4,7 @@ namespace Circli\ApiAuth\Repository\Object;
 
 final class AuthObject implements \Circli\Extension\Auth\Repositories\Objects\AuthObject
 {
-    /** @var AuthToken */
-    private $token;
+    private AuthToken $token;
     private $data;
 
     public function __construct(AuthToken $token, $data)

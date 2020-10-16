@@ -13,10 +13,8 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 
 final class ApiAuth implements Auth
 {
-    /** @var AuthObject */
-    private $object;
-    /** @var EventDispatcherInterface */
-    private $eventDispatcher;
+    private AuthObject $object;
+    private EventDispatcherInterface $eventDispatcher;
 
     public function __construct(AuthObject $object, EventDispatcherInterface $eventDispatcher)
     {

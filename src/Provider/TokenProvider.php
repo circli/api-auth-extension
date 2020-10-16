@@ -5,19 +5,19 @@ namespace Circli\ApiAuth\Provider;
 use Circli\ApiAuth\Exception\InvalidArgument;
 use Circli\ApiAuth\Exception\NotAuthenticated;
 use Circli\ApiAuth\Repository\AuthTokenRepository;
+use Circli\ApiAuth\Repository\Object\AuthToken;
 use Circli\ApiAuth\RequestAttributeKeys;
 use Circli\Extension\Auth\Repositories\Objects\AuthObject;
 use Circli\Extension\Auth\Repositories\Objects\NullAuthObject;
 use Psr\Http\Message\ServerRequestInterface;
+use function strlen;
 
 final class TokenProvider implements AuthProvider
 {
     public const TOKEN_KEY = 'circli:api-auth:provider:token';
 
-    /** @var AuthTokenRepository */
-    private $repository;
-    /** @var \Circli\ApiAuth\Repository\Object\AuthToken|null */
-    private $authToken;
+    private AuthTokenRepository $repository;
+    private ?AuthToken $authToken;
 
     public function __construct(AuthTokenRepository $repository)
     {
@@ -42,9 +42,9 @@ final class TokenProvider implements AuthProvider
             throw new InvalidArgument('Missing api token');
         }
 
-        if (\strlen($apiToken) <= 11) {
+        if (strlen($apiToken) <= 11) {
             throw new InvalidArgument('Malformed api token', [
-                'length' => \strlen($apiToken),
+                'length' => strlen($apiToken),
             ]);
         }
 

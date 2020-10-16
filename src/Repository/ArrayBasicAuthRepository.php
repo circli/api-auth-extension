@@ -9,7 +9,8 @@ use Circli\Extension\Auth\Repositories\Objects\AuthObject;
 
 class ArrayBasicAuthRepository implements BasicAuthRepository
 {
-    private $users = [];
+    /** @var array<string, string> */
+    private array $users = [];
 
     public function __construct(array $users)
     {

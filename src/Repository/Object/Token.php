@@ -4,10 +4,8 @@ namespace Circli\ApiAuth\Repository\Object;
 
 final class Token implements AuthToken
 {
-    /** @var int */
-    private $id;
-    /** @var string */
-    private $apiKey;
+    private int $id;
+    private string $apiKey;
 
     public function __construct(int $id, string $apiKey)
     {

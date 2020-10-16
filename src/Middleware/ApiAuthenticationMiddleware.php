@@ -18,12 +18,9 @@ use Psr\Log\NullLogger;
 
 final class ApiAuthenticationMiddleware implements MiddlewareInterface
 {
-    /** @var LoggerInterface */
-    private $logger;
-    /** @var AuthProvider */
-    private $authProvider;
-    /** @var EventDispatcherInterface */
-    private $eventDispatcher;
+    private LoggerInterface $logger;
+    private AuthProvider $authProvider;
+    private EventDispatcherInterface $eventDispatcher;
     private ResponseFactoryInterface $responseFactory;
 
     public function __construct(

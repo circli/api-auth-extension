@@ -4,8 +4,8 @@ namespace Circli\ApiAuth\Exception;
 
 class NotAuthenticated extends \DomainException
 {
-    /** @var array */
-    private $data;
+    /** @var array<string, mixed> */
+    private array $data;
 
     public function __construct($message, array $data = [])
     {
