@@ -7,7 +7,6 @@ use Circli\ApiAuth\Exception\InvalidArgument;
 use Circli\ApiAuth\Exception\NotAuthenticated;
 use Circli\ApiAuth\Provider\AuthProvider;
 use Circli\ApiAuth\RequestAttributeKeys;
-use Circli\Core\Middleware\LoggerResponseTrait;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -19,14 +18,13 @@ use Psr\Log\NullLogger;
 
 final class ApiAuthenticationMiddleware implements MiddlewareInterface
 {
-    use LoggerResponseTrait;
-
     /** @var LoggerInterface */
     private $logger;
     /** @var AuthProvider */
     private $authProvider;
     /** @var EventDispatcherInterface */
     private $eventDispatcher;
+    private ResponseFactoryInterface $responseFactory;
 
     public function __construct(
         AuthProvider $authProvider,
@@ -54,10 +52,12 @@ final class ApiAuthenticationMiddleware implements MiddlewareInterface
             return $handler->handle($request);
         }
         catch (InvalidArgument $e) {
-            return $this->handleWarning($e->getMessage(), $e->getData());
+            $this->logger->warning($e->getMessage(), $e->getData());
+            return $this->responseFactory->createResponse(400)->withHeader('X-Api-Error', $e->getMessage());
         }
         catch (NotAuthenticated $e) {
-            return $this->handleError($e->getMessage(), $e->getData(), 403);
+            $this->logger->error($e->getMessage(), $e->getData());
+            return $this->responseFactory->createResponse(403);
         }
     }
 }
