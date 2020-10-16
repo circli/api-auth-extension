@@ -12,49 +12,49 @@ use Psr\Http\Message\ServerRequestInterface;
 
 final class BasicAuthProvider implements AuthProvider
 {
-	public const TOKEN_KEY = 'circli:api-auth:provider:token';
+    public const TOKEN_KEY = 'circli:api-auth:provider:token';
 
-	/** @var BasicAuthRepository */
-	private $repository;
-	/** @var \Circli\ApiAuth\Repository\Object\AuthToken|null */
-	private $authToken;
+    /** @var BasicAuthRepository */
+    private $repository;
+    /** @var \Circli\ApiAuth\Repository\Object\AuthToken|null */
+    private $authToken;
 
-	public function __construct(BasicAuthRepository $repository)
-	{
-		$this->repository = $repository;
-	}
+    public function __construct(BasicAuthRepository $repository)
+    {
+        $this->repository = $repository;
+    }
 
-	public function authenticate(ServerRequestInterface $request): ServerRequestInterface
-	{
-		$header = $request->getHeaderLine('Authorization');
-		if (!$header) {
-			throw new InvalidArgument('Missing Authorization header');
-		}
-		if (preg_match("/Basic\s+(.*)$/i", $header, $matches)) {
-			[$user, $password] = explode(':', base64_decode($matches[1]), 2);
+    public function authenticate(ServerRequestInterface $request): ServerRequestInterface
+    {
+        $header = $request->getHeaderLine('Authorization');
+        if (!$header) {
+            throw new InvalidArgument('Missing Authorization header');
+        }
+        if (preg_match("/Basic\s+(.*)$/i", $header, $matches)) {
+            [$user, $password] = explode(':', base64_decode($matches[1]), 2);
 
-			$token = $this->repository->findByUsername($user);
+            $token = $this->repository->findByUsername($user);
 
-			if (!$token || !$token->isValid($password)) {
-				throw new NotAuthenticated('Failed to authenticate api token', [
-					'user' => $user,
-				]);
-			}
-			$this->authToken = $token;
+            if (!$token || !$token->isValid($password)) {
+                throw new NotAuthenticated('Failed to authenticate api token', [
+                    'user' => $user,
+                ]);
+            }
+            $this->authToken = $token;
 
-			$request = $request->withAttribute(RequestAttributeKeys::AUTHENTICATED, true);
-			return $request->withAttribute(self::TOKEN_KEY, $token);
-		}
+            $request = $request->withAttribute(RequestAttributeKeys::AUTHENTICATED, true);
+            return $request->withAttribute(self::TOKEN_KEY, $token);
+        }
 
-		throw new InvalidArgument('Malformed Authorization header. Only supports "Basic"');
-	}
+        throw new InvalidArgument('Malformed Authorization header. Only supports "Basic"');
+    }
 
-	public function getAuthObject(): AuthObject
-	{
-		if (!$this->authToken) {
-			return new NullAuthObject();
-		}
+    public function getAuthObject(): AuthObject
+    {
+        if (!$this->authToken) {
+            return new NullAuthObject();
+        }
 
-		return $this->repository->createAuthObject($this->authToken);
-	}
+        return $this->repository->createAuthObject($this->authToken);
+    }
 }

@@ -7,5 +7,5 @@ use Circli\Extension\Auth\Repositories\Objects\AuthObject;
 
 interface RepositoryInterface
 {
-	public function createAuthObject(AuthToken $token): AuthObject;
+    public function createAuthObject(AuthToken $token): AuthObject;
 }

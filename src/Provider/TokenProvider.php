@@ -12,61 +12,61 @@ use Psr\Http\Message\ServerRequestInterface;
 
 final class TokenProvider implements AuthProvider
 {
-	public const TOKEN_KEY = 'circli:api-auth:provider:token';
+    public const TOKEN_KEY = 'circli:api-auth:provider:token';
 
-	/** @var AuthTokenRepository */
-	private $repository;
-	/** @var \Circli\ApiAuth\Repository\Object\AuthToken|null */
-	private $authToken;
+    /** @var AuthTokenRepository */
+    private $repository;
+    /** @var \Circli\ApiAuth\Repository\Object\AuthToken|null */
+    private $authToken;
 
-	public function __construct(AuthTokenRepository $repository)
-	{
-		$this->repository = $repository;
-	}
+    public function __construct(AuthTokenRepository $repository)
+    {
+        $this->repository = $repository;
+    }
 
-	public function authenticate(ServerRequestInterface $request): ServerRequestInterface
-	{
-		$apiId = (int)$request->getHeaderLine('X-Api-Id');
-		$apiToken = $request->getHeaderLine('X-Api-Token');
+    public function authenticate(ServerRequestInterface $request): ServerRequestInterface
+    {
+        $apiId = (int)$request->getHeaderLine('X-Api-Id');
+        $apiToken = $request->getHeaderLine('X-Api-Token');
 
-		if (!$apiId) {
-			throw new InvalidArgument('Missing api id');
-		}
-		if ($apiId <= 0) {
-			throw new InvalidArgument('Malformed api id', [
-				'id' => $apiId,
-			]);
-		}
+        if (!$apiId) {
+            throw new InvalidArgument('Missing api id');
+        }
+        if ($apiId <= 0) {
+            throw new InvalidArgument('Malformed api id', [
+                'id' => $apiId,
+            ]);
+        }
 
-		if (!$apiToken) {
-			throw new InvalidArgument('Missing api token');
-		}
+        if (!$apiToken) {
+            throw new InvalidArgument('Missing api token');
+        }
 
-		if (\strlen($apiToken) <= 11) {
-			throw new InvalidArgument('Malformed api token', [
-				'length' => \strlen($apiToken),
-			]);
-		}
+        if (\strlen($apiToken) <= 11) {
+            throw new InvalidArgument('Malformed api token', [
+                'length' => \strlen($apiToken),
+            ]);
+        }
 
-		$authTokenObject = $this->repository->findByApiId($apiId);
+        $authTokenObject = $this->repository->findByApiId($apiId);
 
-		if (!$authTokenObject || !$authTokenObject->isValid($apiToken)) {
-			throw new NotAuthenticated('Failed to authenticate api token', [
-				'api_id' => $apiId
-			]);
-		}
-		$this->authToken = $authTokenObject;
+        if (!$authTokenObject || !$authTokenObject->isValid($apiToken)) {
+            throw new NotAuthenticated('Failed to authenticate api token', [
+                'api_id' => $apiId,
+            ]);
+        }
+        $this->authToken = $authTokenObject;
 
-		$request = $request->withAttribute(RequestAttributeKeys::AUTHENTICATED, true);
-		return $request->withAttribute(self::TOKEN_KEY, $authTokenObject);
-	}
+        $request = $request->withAttribute(RequestAttributeKeys::AUTHENTICATED, true);
+        return $request->withAttribute(self::TOKEN_KEY, $authTokenObject);
+    }
 
-	public function getAuthObject(): AuthObject
-	{
-		if (!$this->authToken) {
-			return new NullAuthObject();
-		}
+    public function getAuthObject(): AuthObject
+    {
+        if (!$this->authToken) {
+            return new NullAuthObject();
+        }
 
-		return $this->repository->createAuthObject($this->authToken);
-	}
+        return $this->repository->createAuthObject($this->authToken);
+    }
 }

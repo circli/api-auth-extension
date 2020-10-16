@@ -4,5 +4,5 @@ namespace Circli\ApiAuth\Repository\Object;
 
 interface AuthToken
 {
-	public function isValid(string $apiToken): bool;
+    public function isValid(string $apiToken): bool;
 }

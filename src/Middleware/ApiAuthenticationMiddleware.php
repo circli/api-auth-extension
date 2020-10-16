@@ -19,45 +19,45 @@ use Psr\Log\NullLogger;
 
 final class ApiAuthenticationMiddleware implements MiddlewareInterface
 {
-	use LoggerResponseTrait;
+    use LoggerResponseTrait;
 
-	/** @var LoggerInterface */
-	private $logger;
-	/** @var AuthProvider */
-	private $authProvider;
-	/** @var EventDispatcherInterface */
-	private $eventDispatcher;
+    /** @var LoggerInterface */
+    private $logger;
+    /** @var AuthProvider */
+    private $authProvider;
+    /** @var EventDispatcherInterface */
+    private $eventDispatcher;
 
-	public function __construct(
-		AuthProvider $authProvider,
-		ResponseFactoryInterface $responseFactory,
-		EventDispatcherInterface $eventDispatcher,
-		LoggerInterface $logger = null
-	) {
-		$this->logger = $logger ?? new NullLogger();
-		$this->authProvider = $authProvider;
-		$this->responseFactory = $responseFactory;
-		$this->eventDispatcher = $eventDispatcher;
-	}
+    public function __construct(
+        AuthProvider $authProvider,
+        ResponseFactoryInterface $responseFactory,
+        EventDispatcherInterface $eventDispatcher,
+        LoggerInterface $logger = null
+    ) {
+        $this->logger = $logger ?? new NullLogger();
+        $this->authProvider = $authProvider;
+        $this->responseFactory = $responseFactory;
+        $this->eventDispatcher = $eventDispatcher;
+    }
 
-	/**
-	 * @inheritdoc
-	 */
-	public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
-	{
-		try {
-			$request = $this->authProvider->authenticate($request);
-			$request = $request->withAttribute(
-				RequestAttributeKeys::AUTH,
-				new ApiAuth($this->authProvider->getAuthObject(), $this->eventDispatcher)
-			);
-			return $handler->handle($request);
-		}
-		catch (InvalidArgument $e) {
-			return $this->handleWarning($e->getMessage(), $e->getData());
-		}
-		catch (NotAuthenticated $e) {
-			return $this->handleError($e->getMessage(), $e->getData(), 403);
-		}
-	}
+    /**
+     * @inheritdoc
+     */
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
+    {
+        try {
+            $request = $this->authProvider->authenticate($request);
+            $request = $request->withAttribute(
+                RequestAttributeKeys::AUTH,
+                new ApiAuth($this->authProvider->getAuthObject(), $this->eventDispatcher)
+            );
+            return $handler->handle($request);
+        }
+        catch (InvalidArgument $e) {
+            return $this->handleWarning($e->getMessage(), $e->getData());
+        }
+        catch (NotAuthenticated $e) {
+            return $this->handleError($e->getMessage(), $e->getData(), 403);
+        }
+    }
 }

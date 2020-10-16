@@ -4,5 +4,5 @@ namespace Circli\ApiAuth;
 
 interface RequestAttributeKeys extends \Circli\Extension\Auth\Web\RequestAttributeKeys
 {
-	public const AUTHENTICATED = 'circli:api-auth:authenticated';
+    public const AUTHENTICATED = 'circli:api-auth:authenticated';
 }

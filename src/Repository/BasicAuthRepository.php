@@ -6,5 +6,5 @@ use Circli\ApiAuth\Repository\Object\AuthToken;
 
 interface BasicAuthRepository extends RepositoryInterface
 {
-	public function findByUsername(string $username): ?AuthToken;
+    public function findByUsername(string $username): ?AuthToken;
 }

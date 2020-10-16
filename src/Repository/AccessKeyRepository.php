@@ -6,5 +6,5 @@ use Circli\ApiAuth\Repository\Object\AuthToken;
 
 interface AccessKeyRepository extends RepositoryInterface
 {
-	public function findByApiKey(string $apiId): ?AuthToken;
+    public function findByApiKey(string $apiId): ?AuthToken;
 }

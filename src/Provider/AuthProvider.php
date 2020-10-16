@@ -9,13 +9,13 @@ use Psr\Http\Message\ServerRequestInterface;
 
 interface AuthProvider
 {
-	/**
-	 * @param ServerRequestInterface $request
-	 * @return ServerRequestInterface
-	 * @throws InvalidArgument when input data is wrong
-	 * @throws NotAuthenticated when authentication fails
-	 */
-	public function authenticate(ServerRequestInterface $request): ServerRequestInterface;
+    /**
+     * @param ServerRequestInterface $request
+     * @return ServerRequestInterface
+     * @throws InvalidArgument when input data is wrong
+     * @throws NotAuthenticated when authentication fails
+     */
+    public function authenticate(ServerRequestInterface $request): ServerRequestInterface;
 
-	public function getAuthObject(): AuthObject;
+    public function getAuthObject(): AuthObject;
 }
